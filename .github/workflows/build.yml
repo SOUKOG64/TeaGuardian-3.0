@@ -7,19 +7,51 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - uses: actions/setup-python@v5
         with:
-          command: buildozer android debug
-          buildozer_version: stable
+          python-version: "3.11"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip autoconf automake libtool libltdl-dev pkg-config \
+            zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev build-essential ccache
+
+      - name: Install Buildozer
+        run: pip install buildozer cython==0.29.36
+
+      - name: Build APK
+        shell: bash
+        run: buildozer -v android debug 2>&1 | tee build.log
+
+      - name: Show error details
+        if: failure()
+        run: |
+          n=$(grep -n "# Command failed" build.log | head -1 | cut -d: -f1)
+          if [ -n "$n" ]; then
+            sed -n "$((n > 80 ? n - 80 : 1)),${n}p" build.log
+          else
+            tail -80 build.log
+          fi
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: TeaGuardian-apk
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
