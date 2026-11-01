@@ -1,0 +1,320 @@
+#:import dp kivy.metrics.dp
+
+<TeaButton>:
+    background_normal: ''
+    background_color: 0.45, 0.28, 0.15, 1
+    color: 1, 1, 1, 1
+    size_hint_y: None
+    height: dp(48)
+
+<TeaSpinner>:
+    background_normal: ''
+    background_color: 0.45, 0.28, 0.15, 1
+    color: 1, 1, 1, 1
+    size_hint_y: None
+    height: dp(44)
+
+<TeaInput>:
+    multiline: False
+    size_hint_y: None
+    height: dp(44)
+    padding: dp(10), dp(12)
+    background_color: 1, 1, 1, 1
+    foreground_color: 0.25, 0.15, 0.08, 1
+
+<TeaLabel>:
+    color: 0.25, 0.15, 0.08, 1
+    size_hint_y: None
+    text_size: self.width, None
+    height: self.texture_size[1] + dp(8)
+    halign: 'left'
+
+<TipBox>:
+    size_hint_y: None
+    height: self.minimum_height + dp(16)
+    padding: dp(10)
+    canvas.before:
+        Color:
+            rgba: 0.93, 0.84, 0.66, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<LoginScreen>:
+    ScrollView:
+        BoxLayout:
+            orientation: 'vertical'
+            padding: dp(24)
+            spacing: dp(8)
+            size_hint_y: None
+            height: self.minimum_height
+            TeaLabel:
+                text: 'TeaGuardian'
+                font_size: sp(30)
+                bold: True
+                halign: 'center'
+            TeaLabel:
+                text: 'Чайный дневник'
+                halign: 'center'
+            TeaLabel:
+                text: 'Адрес сервера'
+            TeaInput:
+                id: server
+                hint_text: 'https://....trycloudflare.com'
+                input_type: 'url'
+            TeaLabel:
+                text: 'Логин'
+            TeaInput:
+                id: username
+            TeaLabel:
+                text: 'Пароль'
+            TeaInput:
+                id: password
+                password: True
+            TeaButton:
+                text: 'Войти'
+                on_release: root.submit()
+            TeaButton:
+                text: 'Регистрация'
+                on_release: root.to_register()
+
+<RegisterScreen>:
+    ScrollView:
+        BoxLayout:
+            orientation: 'vertical'
+            padding: dp(24)
+            spacing: dp(8)
+            size_hint_y: None
+            height: self.minimum_height
+            TeaLabel:
+                text: 'Регистрация'
+                font_size: sp(24)
+                bold: True
+            TeaLabel:
+                id: server
+            TeaLabel:
+                text: 'Логин'
+            TeaInput:
+                id: username
+            TeaLabel:
+                text: 'Пароль'
+            TeaInput:
+                id: password
+                password: True
+            TeaLabel:
+                text: 'Повторите пароль'
+            TeaInput:
+                id: repeat
+                password: True
+            TeaButton:
+                text: 'Создать аккаунт'
+                on_release: root.submit()
+            TeaButton:
+                text: 'Назад'
+                on_release: app.go('login')
+
+<HomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(24)
+        spacing: dp(10)
+        TeaLabel:
+            text: 'TeaGuardian'
+            font_size: sp(30)
+            bold: True
+        TeaLabel:
+            id: greeting
+            font_size: sp(18)
+        TeaLabel:
+            id: stats
+        Widget:
+        TeaButton:
+            text: 'Мои рецепты'
+            on_release: app.go('list')
+        TeaButton:
+            text: 'Добавить рецепт'
+            on_release: app.open_edit(True)
+        TeaButton:
+            text: 'Чайные знания'
+            on_release: app.go('know')
+        TeaButton:
+            text: 'Выйти'
+            on_release: app.logout()
+
+<RecipeListScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12)
+        spacing: dp(8)
+        TeaLabel:
+            text: 'Мои рецепты'
+            font_size: sp(22)
+            bold: True
+        TeaInput:
+            id: search
+            hint_text: 'Поиск по названию и заметкам'
+            on_text: root.schedule()
+        TeaSpinner:
+            id: cat
+            text: 'Все категории'
+            values: ['Все категории']
+            on_text: root.schedule()
+        ScrollView:
+            BoxLayout:
+                id: box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(8)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(48)
+            spacing: dp(8)
+            TeaButton:
+                text: '+ Добавить'
+                on_release: app.open_edit(True)
+            TeaButton:
+                text: 'Назад'
+                on_release: app.go('home')
+
+<RecipeViewScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12)
+        spacing: dp(8)
+        TeaLabel:
+            id: title
+            font_size: sp(22)
+            bold: True
+        TeaLabel:
+            id: info
+        ScrollView:
+            TeaLabel:
+                id: notes
+        Label:
+            id: timer
+            font_size: sp(56)
+            color: 0.25, 0.15, 0.08, 1
+            size_hint_y: None
+            height: dp(90)
+        BoxLayout:
+            size_hint_y: None
+            height: dp(48)
+            spacing: dp(8)
+            TeaButton:
+                text: 'Старт'
+                on_release: root.start()
+            TeaButton:
+                text: 'Пауза'
+                on_release: root.pause()
+            TeaButton:
+                text: 'Сброс'
+                on_release: root.reset()
+        BoxLayout:
+            size_hint_y: None
+            height: dp(48)
+            spacing: dp(8)
+            TeaButton:
+                text: 'Изменить'
+                on_release: app.open_edit(False)
+            TeaButton:
+                text: 'Удалить'
+                on_release: app.confirm_delete()
+        TeaButton:
+            text: 'Назад'
+            on_release: app.go('list')
+
+<RecipeEditScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12)
+        spacing: dp(8)
+        ScrollView:
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(6)
+                TeaLabel:
+                    text: 'Название'
+                TeaInput:
+                    id: name
+                TeaLabel:
+                    text: 'Температура, °C'
+                TeaInput:
+                    id: temp
+                    input_filter: 'int'
+                    input_type: 'number'
+                TeaLabel:
+                    text: 'Время, секунд'
+                TeaInput:
+                    id: seconds
+                    input_filter: 'int'
+                    input_type: 'number'
+                TeaLabel:
+                    text: 'Оценка, 0–5'
+                TeaInput:
+                    id: rating
+                    input_filter: 'int'
+                    input_type: 'number'
+                TeaLabel:
+                    text: 'Категория'
+                TeaInput:
+                    id: category
+                TeaLabel:
+                    text: 'Теги (через запятую)'
+                TeaInput:
+                    id: tags
+                TeaLabel:
+                    text: 'Заметки'
+                TeaInput:
+                    id: notes
+                    multiline: True
+                    height: dp(110)
+        TeaButton:
+            text: 'Сохранить'
+            on_release: root.save()
+        TeaButton:
+            text: 'Назад'
+            on_release: app.go('view' if app.current_id else 'list')
+
+<KnowScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12)
+        spacing: dp(8)
+        TeaLabel:
+            text: 'Чайные знания'
+            font_size: sp(22)
+            bold: True
+        ScrollView:
+            BoxLayout:
+                id: box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(8)
+        TeaButton:
+            text: 'Назад'
+            on_release: app.go('home')
+
+<ArticleScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12)
+        spacing: dp(8)
+        TeaLabel:
+            id: title
+            font_size: sp(22)
+            bold: True
+        ScrollView:
+            id: scroll
+            BoxLayout:
+                id: box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(6)
+        TeaButton:
+            text: 'Назад'
+            on_release: app.go('know')
